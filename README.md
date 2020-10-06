@@ -22,17 +22,17 @@ Luego de completados estos pasos se requiere ejecutar nuevamente ``./JenkinsSetu
 
 ## Errores comunes
 ***
-``1.`` ***.\Irun.ps1 : File .\Irun.ps1 cannot be loaded. The file***
-***.\Irun.ps1 is not digitally signed. You cannot run this script on the current system.***
+``1.`` ***.\Irun.ps1 : File .\Irun.ps1 cannot be loaded. The file***<br>
+***.\Irun.ps1 is not digitally signed. You cannot run this script on the current system.***<br>
 
-Este error se soluciona cambiando la Execution-policy de powershell, simplemente puede ejecutar:    
-**Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass**
+Este error se soluciona cambiando la Execution-policy de powershell, simplemente puede ejecutar:<br>  
+**Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass**<br>
 ***
 ``2.``***ConvertFrom-Json : Unrecognized escape sequence. (64): {***<br>
     ***"LocalKBPath":  {***<br>
-                        ***"path":  "C:\knowledgebases"***
+                        ***"path":  "C:\knowledgebases"***<br>
 Este error es porque en el Jconfig.json se estan colocando "\" en lugar de "\\", por ejemplo el LocalKBPath deberia ser de la forma:
-**"LocalKBPath":{ "path":___"C:\\knowledgebases"___}**
+**"LocalKBPath": { "path":___"C:\\knowledgebases"___ }**
 ***
 ``3.``
 ## Opciones avanzadas

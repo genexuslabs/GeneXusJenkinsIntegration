@@ -7,27 +7,21 @@ $flag = 0
 
 if ($isDebug) { Write-Output("INPUT: $ROOT ")}
 
-$Command_0 = {&$Reader "GitHub" "user" }
+$Command_0 = {&$Reader "LocalKBPath" "path" }
 $Result_0 = Invoke-Command -ScriptBlock $Command_0
 if([string]::IsNullOrEmpty($Result_0))
 {
-    Write-Output("GitHub.user is empty in ..\config\Jconfig.json")
+    Write-Output("LocalKBPath.path is empty in ..\config\Jconfig.json")
     $flag = 1
 }
-$Command_1 = {&$Reader "GitHub" "pass" }
+$Command_1 = {&$Reader "Jenkins" "exists" }
 $Result_1 = Invoke-Command -ScriptBlock $Command_1
 if([string]::IsNullOrEmpty($Result_1))
 {
-    Write-Output("GitHub.pass is empty in ..\config\Jconfig.json")
+    Write-Output("Jenkins.exists is empty in ..\config\Jconfig.json")
     $flag = 1
 }
-$Command_2 = {&$Reader "GitHub" "repo" }
-$Result_2 = Invoke-Command -ScriptBlock $Command_2
-if([string]::IsNullOrEmpty($Result_2))
-{
-    Write-Output("GitHub.repo is empty in ..\config\Jconfig.json")
-    $flag = 1
-}
+
 $Command_3 = {&$Reader "GXServer" "url" }
 $Result_3 = Invoke-Command -ScriptBlock $Command_3
 if([string]::IsNullOrEmpty($Result_3))
