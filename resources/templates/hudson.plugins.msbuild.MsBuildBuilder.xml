@@ -1,0 +1,7 @@
+﻿<?xml version="1.1" encoding="UTF-8"?>
+<hudson plugin="msbuild@1.29">
+  <installations>
+    <hud2son>
+    </hud2son>
+  </installations>
+</hudson>

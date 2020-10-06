@@ -1,0 +1,75 @@
+*Trilead API
+Folders
+OWASP Markup Formatter
+*Oracle Java SE Development Kit Installer
+*Structs
+*Pipeline: Step API
+*Token Macro
+Build Timeout
+*Credentials
+*Plain Credentials
+*SSH Credentials
+Credentials Binding
+*SCM API
+*Pipeline: API
+Timestamper
+*Script Security
+*Pipeline: Supporting APIs
+*Durable Task
+*Pipeline: Nodes and Processes
+*Plugin Utilities API
+*Font Awesome API
+*Popper.js API
+*JQuery3 API
+*Bootstrap 4 API
+*Snakeyaml API
+*Jackson 2 API
+*ECharts API
+*JUnit
+*Matrix Project
+*Command Agent Launcher
+*Resource Disposer
+Workspace Cleanup
+Ant
+*bouncycastle API
+*JavaScript GUI Lib: ACE Editor bundle
+*JavaScript GUI Lib: jQuery bundles (jQuery and jQuery UI)
+*Pipeline: SCM Step
+*Pipeline: Groovy
+*Pipeline: Job
+*Apache HttpComponents Client 4.x API
+*Display URL API
+Mailer
+*Pipeline: Basic Steps
+Gradle
+*Pipeline: Milestone Step
+*Pipeline: Input Step
+*Pipeline: Stage Step
+*Pipeline Graph Analysis
+*Pipeline: REST API
+*JavaScript GUI Lib: Handlebars bundle
+*JavaScript GUI Lib: Moment.js bundle
+Pipeline: Stage View
+*Pipeline: Build Step
+*Pipeline: Model API
+*Pipeline: Declarative Extension Points API
+*JSch dependency
+*Git client
+*GIT server
+*Pipeline: Shared Groovy Libraries
+*Branch API
+*Pipeline: Multibranch
+*Pipeline: Stage Tags Metadata
+*Pipeline: Declarative
+*Lockable Resources
+Pipeline
+*OkHttp
+*GitHub API
+Git
+*GitHub
+GitHub Branch Source
+Pipeline: GitHub Groovy Libraries
+Pipeline: Stage View
+Git
+MapDB API
+Subversion
