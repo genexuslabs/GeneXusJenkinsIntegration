@@ -25,8 +25,13 @@ Luego de completados estos pasos se requiere ejecutar nuevamente ``./JenkinsSetu
 ``1.`` ***.\Irun.ps1 : File .\Irun.ps1 cannot be loaded. The file***
 ***.\Irun.ps1 is not digitally signed. You cannot run this script on the current system.***
 
-Este error se soluciona cambiando la Execution-policy de powershell, simplemente puede ejecutar: 
+Este error se soluciona cambiando la Execution-policy de powershell, simplemente puede ejecutar:    
 **Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass**
 ***
 ``2.``
+
 ## Opciones avanzadas
+
+Ejecutar ``.\JenkinsSetup.ps1 /h`` para ver una lista de opciones que brinda el setup para instalaciones/actualizaciones particulares, entre las que se destacan:
+  - updategxinstances
+  - setprovider
