@@ -28,8 +28,13 @@ Luego de completados estos pasos se requiere ejecutar nuevamente ``./JenkinsSetu
 Este error se soluciona cambiando la Execution-policy de powershell, simplemente puede ejecutar:    
 **Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass**
 ***
-``2.``
-
+``2.``***ConvertFrom-Json : Unrecognized escape sequence. (64): {***<br>
+    ***"LocalKBPath":  {***<br>
+                        ***"path":  "C:\knowledgebases"***
+Este error es porque en el Jconfig.json se estan colocando "\" en lugar de "\\", por ejemplo el LocalKBPath deberia ser de la forma:
+**"LocalKBPath":{ "path":___"C:\\knowledgebases"___}**
+***
+``3.``
 ## Opciones avanzadas
 
 Ejecutar ``.\JenkinsSetup.ps1 /h`` para ver una lista de opciones que brinda el setup para instalaciones/actualizaciones particulares, entre las que se destacan:
