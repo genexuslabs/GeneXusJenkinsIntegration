@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Update" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(GX_PROGRAM_DIR)\GeneXus.Tasks.targets"/>
+  <Import Project="$(GX_PROGRAM_DIR)\Genexus.Server.Tasks.targets"/>
+  <Import Project="$(GX_PROGRAM_DIR)\GXtest.targets"/>
+  <Import Project="$(GX_PROGRAM_DIR)\MSBuild.Community.Tasks.Targets"/>
+  <Import Condition="Exists('$(LocalSettings)')" Project="$(LocalSettings)"/>
+
+  <!--Input Parameters-->
+  <PropertyGroup>
+
+    <!-- Server Properties -->
+    <ServerUrl></ServerUrl>
+    <ServerUsername></ServerUsername>
+    <ServerPassword></ServerPassword>
+    <ServerKbAlias></ServerKbAlias>
+    <ServerKbVersion></ServerKbVersion>
+    <GetAllKbVersions></GetAllKbVersions>
+    <VersionName></VersionName>
+
+    <!-- Bring Changes Properties -->
+    <IsRevert></IsRevert>
+    <RevisionIds></RevisionIds>
+
+    <!-- Working KB Properties -->
+    <WorkingDirectory></WorkingDirectory>
+    <DbaseServerInstance></DbaseServerInstance>
+    <CreateDbInKbFolder></CreateDbInKbFolder>
+    <DbaseUseIntegratedSecurity></DbaseUseIntegratedSecurity>
+    <DbaseServerUsername></DbaseServerUsername>
+    <DbaseServerPassword></DbaseServerPassword>
+    <DbaseName></DbaseName>
+    <WorkingVersion></WorkingVersion>
+    <WorkingEnvironment></WorkingEnvironment>
+    <LinkDeploy></LinkDeploy>
+    <DeployToCloud Condition=" '$(DeployToCloud)' == '' "></DeployToCloud>
+
+    <!-- Source Control Properties -->
+    <Executable></Executable>
+    <TeamDevTasks></TeamDevTasks>
+    <AutoGetSource></AutoGetSource>
+    <CleanCopy></CleanCopy>
+    <TagOnSuccess></TagOnSuccess>
+	
+	
+	<!-- Continuous Integration Properties -->
+	<ApplicationBaseURL>ApplicationBaseURL</ApplicationBaseURL>
+	<MetadataFile></MetadataFile>
+
+    <!-- Building Properties -->
+    <ForceRebuild Condition=" '$(ForceRebuild)' == '' ">false</ForceRebuild>
+    <!-- Tests Properties -->
+    <ExecutionDataFilePath></ExecutionDataFilePath>
+    <DetailedResults>false</DetailedResults>
+    <TestRunner Condition="'$(TestRunner)' == ''">Runner</TestRunner>
+    <TestResultsPath>$(MSBuildThisFileDirectory)..\Tests</TestResultsPath>
+    <TestResultsFileName>TestResults.xml</TestResultsFileName>
+    <TestResultsFullPath>$(TestResultsPath)\$(TestResultsFileName)</TestResultsFullPath>
+  </PropertyGroup>
+
+  <Target Name="SetLocalProperties">
+    <SetVersionProperty Condition="'@(VersionProperty)' != ''" Name="%(VersionProperty.Identity)" Value="%(VersionProperty.Value)" ContinueOnError="true"/>
+    <SetEnvironmentProperty Condition="'@(EnvironmentProperty)' != ''" Name="%(EnvironmentProperty.Identity)" Value="%(EnvironmentProperty.Value)" ContinueOnError="true"/>
+    <SetGeneratorProperty Condition="'@(GeneratorProperty)' != ''" Generator="%(GeneratorProperty.Generator)" Name="%(GeneratorProperty.PropertyName)" Value="%(GeneratorProperty.PropertyValue)" ContinueOnError="true"/>
+    <SetDataStoreProperty Condition="'@(DataStoreProperty)' != ''" Datastore="%(DataStoreProperty.DataStore)" Name="%(DataStoreProperty.PropertyName)" Value="%(DataStoreProperty.PropertyValue)" ContinueOnError="true"/>
+  </Target>
+
+  <Target Name="CreateKB">
+    <Error Condition="'$(WorkingDirectory)'==''" Text="WorkingDirectory cannot be null" />
+    <Message Text="CreateKBfromServer Directory=$(WorkingDirectory)" />
+    <CreateKnowledgeBaseFromServer
+      Directory="$(WorkingDirectory)"
+      CreateDbInKbFolder="$(CreateDbInKbFolder)"
+      DBName="$(DbaseName)"
+      IntegratedSecurity="$(DbaseUseIntegratedSecurity)"
+      UserId="$(DbaseServerUsername)"
+      Password="$(DbaseServerPassword)"
+      ServerUri="$(ServerUrl)"
+      ServerInstance="$(DbaseServerInstance)"
+      ServerKBAlias="$(ServerKbAlias)"
+      ServerVersionName="$(ServerKbVersion)"
+      ServerUserName="$(ServerUsername)"
+      ServerPassword="$(ServerPassword)"
+      FullKB="$(GetAllKbVersions)" />
+  </Target>
+
+  <Target Name="SelectVersion" Condition="'$(WorkingVersion)'!=''" >
+    <SetActiveVersion VersionName="$(WorkingVersion)"  />
+  </Target>
+
+  <Target Name="SelectEnvironment" Condition="'$(WorkingEnvironment)'!=''">
+    <SetActiveEnvironment EnvironmentName="$(WorkingEnvironment)" />
+  </Target>
+
+  <Target Name="OpenKB">
+    <Error Condition="'$(WorkingDirectory)'==''" Text="WorkingDirectory cannot be null" />
+    <Message Text="OpenKnowledgeBase Directory=$(WorkingDirectory)" />
+    <OpenKnowledgeBase
+      DatabaseUser="$(DbaseServerUsername)"
+      DatabasePassword="$(DbaseServerPassword)"
+      Directory="$(WorkingDirectory)"/>
+  </Target>
+
+  <Target Name="Open" DependsOnTargets="OpenKB;SelectVersion;SelectEnvironment;SetLocalProperties"/>
+  <Target Name="CheckOut" DependsOnTargets="CreateKB;SelectVersion;SelectEnvironment;SetLocalProperties"/>
+  <Target Name="CleanCheckOut" DependsOnTargets="CleanWorkingDirectory;CheckOut" />
+  <Target Name="CleanWorkingDirectory" DependsOnTargets="DeleteOperationalDBs;DeleteKB;CleanFolder" />
+
+  <Target Name="Update" DependsOnTargets="Open">
+    <UpdateFromServer	ServerUserName="$(ServerUsername)" ServerPassword="$(ServerPassword)" />
+  </Target>
+
+  <Target Name="CreateDB" DependsOnTargets="Open">
+    <CreateDatabase ExecuteCreate="true" />
+  </Target>
+
+  <Target Name="BringChanges" DependsOnTargets="Open">
+    <BringChanges Revert="$(IsRevert)" ServerUserName="$(ServerUsername)" ServerPassword="$(ServerPassword)" FromVersionName="$(VersionName)" RevisionIds="$(RevisionIds)" />
+  </Target>
+
+  <Target Name="BuildWithMetadata" DependsOnTargets="Build;GenerateMetadata" />
+
+  <Target Name="Build" DependsOnTargets="Open;SetCredential">
+    <!-- if we want to build tests while building the app -->
+    <UpdateTestRefs ExecutionDataFilePath="$(ExecutionDataFilePath)" ServerUserName="$(ServerUsername)" ServerPassword="$(ServerPassword)"/>
+    <BuildAll CompileMains="true" ForceRebuild="$(ForceRebuild)"/>
+  </Target>
+
+  <Target Name="RunTests" DependsOnTargets="Open">
+    <RunTests AllowFailedTests="true" DetailedResults="$(DetailedResults)" ServerUserName="$(ServerUsername)" ServerPassword="$(ServerPassword)">
+      <Output TaskParameter="ExecutedCount" PropertyName="TestCasesCount"/>
+    </RunTests>
+    <JUnitExportTests Condition="$(TestCasesCount) &gt; 0" ServerUserName="$(ServerUsername)" ServerPassword="$(ServerPassword)">
+      <Output TaskParameter="JUnitTestFilePath" PropertyName="JUnitTestFilePathOutput"/>
+    </JUnitExportTests>
+    <Move Condition="$(TestCasesCount) &gt; 0" SourceFiles="$(JUnitTestFilePathOutput)" DestinationFiles="$(TestResultsFullPath)"/>
+    <Copy Condition="$(TestCasesCount) &lt; 1" SourceFiles="$(MSBuildThisFileDirectory)\EmptyTestResults.xml" DestinationFiles="$(TestResultsFullPath)" />
+	
+	<!-- consolidate failure nodes as a work-around to https://issues.jenkins-ci.org/browse/JENKINS-31187 -->
+	<FileUpdate Files="$(TestResultsFullPath)"
+				IgnoreCase="true"
+				Regex="\&quot;\s*/&gt;\s*&lt;failure\s+message\s*=\s*\&quot;"
+				ReplacementText="&amp;#xA;&amp;#xA;" 
+	/>
+  </Target>
+  
+  <Target Name="SetCredential" Condition="'$(DeployToCloud)' == 'true'">
+		<SetCredential UserName="$(d2cusername)" UserPassword="$(d2cpassword)"  Persist="true"/>
+  </Target>
+
+  <Target Name="GenerateMetadata" DependsOnTargets="GetLinkDeployToCloud;WriteMetadata"/>
+  
+  <Target Name="WriteMetadata">
+	<Message Text="MetadataFile = $(MetadataFile)" />
+	<WriteLinesToFile File="$(MetadataFile)" Overwrite="true" Lines="" />
+	<WriteLinesToFile Condition="'$(DeployToCloud)' == 'true'" File="$(MetadataFile)" Lines="$(ApplicationBaseURL)=$(LinkDeploy)" Encoding="Unicode"/>
+  </Target>
+
+  <Target Name="GetLinkDeployToCloud" Condition="'$(DeployToCloud)' == 'true'" DependsOnTargets="Open">
+	<GetGeneratorProperty  Generator="Default" Name="Web Root">
+		<Output TaskParameter="PropertyValue" PropertyName="LinkDeploy"/>
+	</GetGeneratorProperty>
+	<Message  Text="$(LinkDeploy)" />
+  </Target>
+
+  <Target Name="SetSqlCmdOptions">
+    <PropertyGroup>
+      <!--SQLcmd Options-->
+      <SqlLoginUser Condition="$(DbaseServerUsername)!='' And !$(DbaseUseIntegratedSecurity)">-U $(DbaseServerUsername) </SqlLoginUser>
+      <SqlLoginPassword Condition="$(DbaseServerPassword)!='' And $(SqlLoginUser)!=''">-P $(DbaseServerPassword) </SqlLoginPassword>
+      <SqlLoginTrustedConnection Condition="$(DbaseUseIntegratedSecurity)">-E </SqlLoginTrustedConnection>
+      <SqlCmdOptions>$(SqlLoginUser)$(SqlLoginPassword)$(SqlLoginTrustedConnection)-X -b</SqlCmdOptions>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DeleteOperationalDBs" Condition="'@(OperationalDatabase)' != ''" DependsOnTargets="SetSqlCmdOptions">
+    <Exec Command='sqlcmd $(SqlCmdOptions) -S "%(OperationalDatabase.ServerName)" -Q "IF EXISTS (SELECT name FROM sys.databases WHERE name = N%27%(OperationalDatabase.Identity)%27) ALTER DATABASE [%(OperationalDatabase.Identity)] SET SINGLE_USER WITH ROLLBACK IMMEDIATE"' />
+    <Exec Command='sqlcmd $(SqlCmdOptions) -S "%(OperationalDatabase.ServerName)" -Q "IF EXISTS (SELECT name FROM sys.databases WHERE name = N%27%(OperationalDatabase.Identity)%27) DROP DATABASE [%(OperationalDatabase.Identity)]"' />
+  </Target>
+
+  <Target Name="DeleteKB" DependsOnTargets="GetKbDatabase;SetSqlCmdOptions">
+    <Message Text="DbaseServerInstance = $(DbaseServerInstance)" />
+    <Exec Command='sqlcmd $(SqlCmdOptions) -S "$(DbaseServerInstance)" -Q "IF EXISTS (SELECT name FROM sys.databases WHERE name = N%27$(KbDatabase)%27) ALTER DATABASE [$(KbDatabase)] SET SINGLE_USER WITH ROLLBACK IMMEDIATE"' />
+    <Exec Command='sqlcmd $(SqlCmdOptions) -S "$(DbaseServerInstance)" -Q "IF EXISTS (SELECT name FROM sys.databases WHERE name = N%27$(KbDatabase)%27) DROP DATABASE [$(KbDatabase)]"' />
+  </Target>
+
+  <Target Name="CleanFolder">
+    <ItemGroup>
+      <ToDelete Include="$(WorkingDirectory)\*.*" />
+    </ItemGroup>
+    <Delete Files="@(ToDelete)" />
+
+    <!--This trick was taken from http://blog.coryfoy.com/2007/03/msbuild-task-to-recursively-delete-all-of-a-folders-contents/-->
+    <Exec Command='for /f "Tokens=*" %%i in (%27dir /ad /b "$(WorkingDirectory)"%27) do rd /s/q "$(WorkingDirectory)\%%i"' />
+    <Exec Command='rd /s/q "$(WorkingDirectory)"' />
+  </Target>
+
+  <Target Name="GetKbDatabase">
+    <ItemGroup>
+      <KbDirectory Include="$(WorkingDirectory)"/>
+    </ItemGroup>
+    <PropertyGroup>
+      <KbDatabase Condition="$(DbaseName)!=''">$(DbaseName)</KbDatabase>
+
+      <!--This fails when WorkingDirectory has a trailing slash, thus the error below-->
+      <KbDatabase Condition="$(DbaseName)==''">GX_KB_%(KbDirectory.filename)</KbDatabase>
+    </PropertyGroup>
+    <Error Text="Trailing slash in WorkingDirectory is not supported" Condition="HasTrailingSlash($(WorkingDirectory))" />
+    <Message Importance="high" Text="KbDatabase: $(KbDatabase)" />
+  </Target>
+</Project>

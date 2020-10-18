@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+  		<GeneratorProperty Include="deploy to cloud">
+			<PropertyName>deploy to cloud</PropertyName>
+			<PropertyValue>Yes</PropertyValue>
+		</GeneratorProperty>
+		<EnvironmentProperty Include="Populate Data">
+			<Name>Populate Data</Name>
+			<Value>False</Value>
+		</EnvironmentProperty>
+    </ItemGroup>
+</Project>
