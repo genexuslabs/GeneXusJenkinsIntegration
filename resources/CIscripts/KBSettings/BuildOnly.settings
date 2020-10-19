@@ -11,6 +11,16 @@
 			<PropertyName>Reorganize server tables</PropertyName>
 			<PropertyValue>No</PropertyValue>
 		</GeneratorProperty>
+		<GeneratorProperty Include="Servlet directory">
+			<Generator>Default</Generator>
+			<PropertyName>Servlet directory</PropertyName>
+			<PropertyValue>EMPTY</PropertyValue>
+		</GeneratorProperty>
+		<GeneratorProperty Include="Static content directory seen from client">
+			<Generator>Default</Generator>
+			<PropertyName>Static content directory seen from client</PropertyName>
+			<PropertyValue>EMPTY</PropertyValue>
+		</GeneratorProperty>
 		<EnvironmentProperty Include="Populate Data">
 			<Name>Populate Data</Name>
 			<Value>False</Value>
