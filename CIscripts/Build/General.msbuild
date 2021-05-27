@@ -41,14 +41,14 @@
     <AutoGetSource></AutoGetSource>
     <CleanCopy></CleanCopy>
     <TagOnSuccess></TagOnSuccess>
-	
-	
-	<!-- Continuous Integration Properties -->
-	<ApplicationBaseURL>ApplicationBaseURL</ApplicationBaseURL>
-	<MetadataFile></MetadataFile>
+
+    <!-- Continuous Integration Properties -->
+    <ApplicationBaseURL>ApplicationBaseURL</ApplicationBaseURL>
+    <MetadataFile></MetadataFile>
 
     <!-- Building Properties -->
     <ForceRebuild Condition=" '$(ForceRebuild)' == '' ">false</ForceRebuild>
+
     <!-- Tests Properties -->
     <ExecutionDataFilePath></ExecutionDataFilePath>
     <DetailedResults>false</DetailedResults>
@@ -56,6 +56,7 @@
     <TestResultsPath>$(MSBuildThisFileDirectory)..\Tests</TestResultsPath>
     <TestResultsFileName>TestResults.xml</TestResultsFileName>
     <TestResultsFullPath>$(TestResultsPath)\$(TestResultsFileName)</TestResultsFullPath>
+
   </PropertyGroup>
 
   <Target Name="SetLocalProperties">
@@ -136,31 +137,31 @@
     <Move Condition="$(TestCasesCount) &gt; 0" SourceFiles="$(JUnitTestFilePathOutput)" DestinationFiles="$(TestResultsFullPath)"/>
     <Copy Condition="$(TestCasesCount) &lt; 1" SourceFiles="$(MSBuildThisFileDirectory)\EmptyTestResults.xml" DestinationFiles="$(TestResultsFullPath)" />
 	
-	<!-- consolidate failure nodes as a work-around to https://issues.jenkins-ci.org/browse/JENKINS-31187 -->
-	<FileUpdate Files="$(TestResultsFullPath)"
-				IgnoreCase="true"
-				Regex="\&quot;\s*/&gt;\s*&lt;failure\s+message\s*=\s*\&quot;"
-				ReplacementText="&amp;#xA;&amp;#xA;" 
-	/>
+    <!-- consolidate failure nodes as a work-around to https://issues.jenkins-ci.org/browse/JENKINS-31187 -->
+    <FileUpdate Files="$(TestResultsFullPath)"
+      IgnoreCase="true"
+      Regex="\&quot;\s*/&gt;\s*&lt;failure\s+message\s*=\s*\&quot;"
+      ReplacementText="&amp;#xA;&amp;#xA;" 
+    />
   </Target>
   
   <Target Name="SetCredential" Condition="'$(DeployToCloud)' == 'true'">
-		<SetCredential UserName="$(d2cusername)" UserPassword="$(d2cpassword)"  Persist="true"/>
+    <SetCredential UserName="$(d2cusername)" UserPassword="$(d2cpassword)"  Persist="true"/>
   </Target>
 
   <Target Name="GenerateMetadata" DependsOnTargets="GetLinkDeployToCloud;WriteMetadata"/>
   
   <Target Name="WriteMetadata">
-	<Message Text="MetadataFile = $(MetadataFile)" />
-	<WriteLinesToFile File="$(MetadataFile)" Overwrite="true" Lines="" />
-	<WriteLinesToFile Condition="'$(DeployToCloud)' == 'true'" File="$(MetadataFile)" Lines="$(ApplicationBaseURL)=$(LinkDeploy)" Encoding="Unicode"/>
+    <Message Text="MetadataFile = $(MetadataFile)" />
+    <WriteLinesToFile File="$(MetadataFile)" Overwrite="true" Lines="" />
+    <WriteLinesToFile Condition="'$(DeployToCloud)' == 'true'" File="$(MetadataFile)" Lines="$(ApplicationBaseURL)=$(LinkDeploy)" Encoding="Unicode"/>
   </Target>
 
   <Target Name="GetLinkDeployToCloud" Condition="'$(DeployToCloud)' == 'true'" DependsOnTargets="Open">
-	<GetGeneratorProperty  Generator="Default" Name="Web Root">
-		<Output TaskParameter="PropertyValue" PropertyName="LinkDeploy"/>
-	</GetGeneratorProperty>
-	<Message  Text="$(LinkDeploy)" />
+    <GetGeneratorProperty Generator="Default" Name="Web Root">
+      <Output TaskParameter="PropertyValue" PropertyName="LinkDeploy"/>
+    </GetGeneratorProperty>
+    <Message Text="$(LinkDeploy)" />
   </Target>
 
   <Target Name="SetSqlCmdOptions">

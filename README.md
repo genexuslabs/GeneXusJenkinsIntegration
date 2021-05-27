@@ -1,6 +1,11 @@
-# GeneXus-Jenkins Integration
-This repository contains resources used for [GeneXus](https://genexus.com/) and [GeneXus Server](https://genexus.com/gxserver) integrations with a Jenkins server.
+# Continuous Integration with GeneXus Server and Jenkins
+These resources automate the task of installing a new Jenkins Server, as well as creating, managing and monitoring continuous integration pipelines from GeneXus Server or GeneXus IDE.
 
-With this integration you may create, configure and monitor continuous integration pipelines in a [Jenkins server](https://www.jenkins.io/), directly from GeneXus IDE or GeneXus Server web console.
+## Want to install Jenkins for GeneXus Server?
+Follow [these instructions](./GXServer-JenkinsSetup/) if you are interested in installing a Jenkins server.
 
-Please refer to [How To Configure GeneXus-Jenkins Integration](https://wiki.genexus.com/commwiki/servlet/wiki?46996) in the GeneXus Wiki for further information on how to configure Jenkins and GeneXus Server for this.
+## Want to integrate an existent Jenkins with GeneXus Server or GeneXus?
+See [these instructions](./CIscripts/) if you want to create and monitor pipelines from GeneXus Server and GeneXus Windows client.
+
+## Want to known more about CI with GeneXus Server and GeneXus?
+Just look at our document [CI integrated to GeneXus and GXserver](https://wiki.genexus.com/commwiki/servlet/wiki?46966)

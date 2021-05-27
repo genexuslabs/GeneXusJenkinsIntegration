@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <GeneratorProperty Include="deploy to cloud">
+      <Generator>Default</Generator>
+      <PropertyName>deploy to cloud</PropertyName>
+      <PropertyValue>No</PropertyValue>
+    </GeneratorProperty>
+    <GeneratorProperty Include="reorganize server tables">
+      <Generator>Default</Generator>
+      <PropertyName>Reorganize server tables</PropertyName>
+      <PropertyValue>No</PropertyValue>
+    </GeneratorProperty>
+    <GeneratorProperty Include="Servlet directory">
+      <Generator>Default</Generator>
+      <PropertyName>Servlet directory</PropertyName>
+      <PropertyValue>EMPTY</PropertyValue>
+    </GeneratorProperty>
+    <GeneratorProperty Include="Static content directory seen from client">
+      <Generator>Default</Generator>
+      <PropertyName>Static content directory seen from client</PropertyName>
+      <PropertyValue>EMPTY</PropertyValue>
+    </GeneratorProperty>
+    <EnvironmentProperty Include="Populate Data">
+      <Name>Populate Data</Name>
+      <Value>False</Value>
+    </EnvironmentProperty>
+    <EnvironmentProperty Include="Keep GAM database updated">
+      <Name>Keep GAM database updated</Name>
+      <Value>False</Value>
+    </EnvironmentProperty>
+    <DataStoreProperty Include="Database name">
+      <Datastore>Default</Datastore>
+      <PropertyName>Database name</PropertyName>
+      <PropertyValue>EMPTY</PropertyValue>
+    </DataStoreProperty>
+    <DataStoreProperty Include="Server name">
+      <Datastore>Default</Datastore>
+      <PropertyName>Server name</PropertyName>
+      <PropertyValue>EMPTY</PropertyValue>
+    </DataStoreProperty>
+  </ItemGroup>
+</Project>
