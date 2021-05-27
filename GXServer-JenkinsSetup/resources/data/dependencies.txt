@@ -1,0 +1,3 @@
+git.install
+curl
+visualstudio2019buildtools
