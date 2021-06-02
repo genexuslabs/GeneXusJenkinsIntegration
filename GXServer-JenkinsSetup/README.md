@@ -15,8 +15,6 @@ First of all, you need to get these scripts: go to the root of this repository a
 1. If you have some Git basics, you can do the clone of the repo with the given URL or
 2. you just simply can download a zip.
 
-For the following steps, consider that the scripts are located at c:\GXJenkinsXIntegration.
-
 ### 2. Configure required information
 Locate the file [``./conf/Jconfig.json``](./conf/Jconfig.json) and complete the required information:
 
@@ -48,7 +46,9 @@ An example with the required information is provided at [``./Jconfig-sample.json
 ### 3. Install
 You are ready to execute the installation script. Powershell is need to execute it.
 1. Open "Windows Powershell" command-line.
-2. Go to the directory where you have your scripts; e.g.:
+2. Go to the directory where you have your scripts; For reference, lets say the scripts are located at `c:\GXJenkinsXIntegration`.
+
+ e.g.:
 ```
 PS C:\Users\me> cd c:\GXJenkinsXIntegration\GXServer-JenkinsSetup
 ```
