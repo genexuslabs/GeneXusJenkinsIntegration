@@ -123,7 +123,7 @@
 
   <Target Name="Build" DependsOnTargets="Open;SetCredential">
     <!-- if we want to build tests while building the app -->
-    <UpdateTestRefs ExecutionDataFilePath="$(ExecutionDataFilePath)" ServerUserName="$(ServerUsername)" ServerPassword="$(ServerPassword)"/>
+    <UpdateTestRefs Condition="'$(runTests)' == 'true'" ExecutionDataFilePath="$(ExecutionDataFilePath)" ServerUserName="$(ServerUsername)" ServerPassword="$(ServerPassword)"/>
     <BuildAll CompileMains="true" ForceRebuild="$(ForceRebuild)"/>
   </Target>
 
