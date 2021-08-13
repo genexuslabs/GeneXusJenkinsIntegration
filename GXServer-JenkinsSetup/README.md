@@ -46,11 +46,9 @@ An example with the required information is provided at [``./Jconfig-sample.json
 ### 3. Install
 You are ready to execute the installation script. Powershell is need to execute it.
 1. Open "Windows Powershell" command-line.
-2. Change to the directory that contains your script (for instance, `'c:\GXJenkinsXIntegration'`).
-
- e.g.:
+2. Change to the directory that contains your script (for instance, `'C:\GXJenkinsXIntegration'`)
 ```
-PS C:\Users\me> cd c:\GXJenkinsXIntegration\GXServer-JenkinsSetup
+PS C:\Users\me> cd C:\GXJenkinsXIntegration\GXServer-JenkinsSetup
 ```
 
 3. Execute
