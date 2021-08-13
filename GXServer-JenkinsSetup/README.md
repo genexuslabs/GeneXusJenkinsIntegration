@@ -46,21 +46,21 @@ An example with the required information is provided at [``./Jconfig-sample.json
 ### 3. Install
 You are ready to execute the installation script. Powershell is need to execute it.
 1. Open "Windows Powershell" command-line.
-2. Change to the directory that contains your script (for instance, `'C:\GXJenkinsXIntegration'`)
+2. Change to the directory that contains your script (for instance, `'C:\GeneXusJenkinsIntegration'`)
 ```
-PS C:\Users\me> cd C:\GXJenkinsXIntegration\GXServer-JenkinsSetup
+PS C:\Users\me> cd C:\GeneXusJenkinsIntegration\GXServer-JenkinsSetup
 ```
 
 3. Execute
 ```
-PS C:\GXJenkinsXIntegration\GXServer-JenkinsSetup> .\JenkinsSetup.ps1
+PS C:\GeneXusJenkinsIntegration\GXServer-JenkinsSetup> .\JenkinsSetup.ps1
 ```
 The first run only installs Jenkins. Then, it automatically starts your Jenkins web and a list of steps to configure manually.
 
 4. Follow the steps (if file doesn't open please locate it in ``.\resources\Readme.txt``)
 5. When your Jenkins is ready, execute JenkinsSetup.ps1 again to configure with your Jconfig.json information
 ```
-PS C:\GXJenkinsXIntegration\GXServer-JenkinsSetup> .\JenkinsSetup.ps1
+PS C:\GeneXusJenkinsIntegration\GXServer-JenkinsSetup> .\JenkinsSetup.ps1
 ```
 
 6. Last, a file will be opened with the available information to configure your GXserver provider.
