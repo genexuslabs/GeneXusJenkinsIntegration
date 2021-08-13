@@ -21,7 +21,7 @@ Add-Content -Path $InitialFile -Value "                         - $AdminPassword
 Add-Content -Path $InitialFile -Value ""
 Add-Content -Path $InitialFile -Value "  - Select 'Install suggested plugins'"
 Add-Content -Path $InitialFile -Value ""
-Add-Content -Path $InitialFile -Value "  - Select 'Continue as admin', is important not change the user yet "
+Add-Content -Path $InitialFile -Value "  - Select 'Continue as admin', it is important not to change the user yet"
 Add-Content -Path $InitialFile -Value ""
 Add-Content -Path $InitialFile -Value "  - Select 'Save and Finish'"
 Add-Content -Path $InitialFile -Value ""
