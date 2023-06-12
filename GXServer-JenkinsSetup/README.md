@@ -67,7 +67,7 @@ PS C:\GXJenkinsXIntegration\GXServer-JenkinsSetup> .\JenkinsSetup.ps1
 
 6. Last, a file will be opened with the available information to configure your GXserver provider.
 
-If you have any problem first look at the following section [Common Issues](#common-issues) for a list of known errors; if the problem persist please, contact gxserveronline@genexus.com attaching the file `` .\jenkins.log`` 
+If you have any problem first look at the following section [Common Issues](#common-issues) for a list of known errors; if the problem persist please, contact gxserver@genexus.com attaching the file `` .\jenkins.log``
 
 ## Advanced
 
