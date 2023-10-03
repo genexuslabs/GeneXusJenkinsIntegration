@@ -1,0 +1,25 @@
+@Library('gx-library')
+
+pipeline {
+    agent { node { label 'kbbuilder-node-6' } }
+    stages {
+        stage('Setup parameters') {
+            steps {
+                script { 
+                    properties([
+                        parameters([
+                            string(defaultValue: '', name: 'in_gxversionname', trim: true)
+                        ]),
+                        disableConcurrentBuilds(),
+                        buildDiscarder(logRotator(numToKeepStr: '10'))
+                    ])
+                }
+            }
+        }
+        stage('Print') {
+            steps {
+                jobHandleGeneXusInstallation "Calling handle gx instalaltion"
+            }
+        }
+    }
+}
