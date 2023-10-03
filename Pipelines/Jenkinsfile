@@ -1,4 +1,4 @@
-@Library('gx-library')
+library identifier: 'gx-library'
 
 pipeline {
     agent { node { label 'kbbuilder-node-6' } }
