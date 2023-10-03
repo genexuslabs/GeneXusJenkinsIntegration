@@ -8,7 +8,8 @@ pipeline {
                 script { 
                     properties([
                         parameters([
-                            string(defaultValue: '', name: 'in_gxversionname', trim: true)
+                            booleanParam(defaultValue: false, description: 'Force rebuild', name: 'forceRebuild'),
+                            booleanParam(defaultValue: false, description: 'Force update GeneXus Installation', name: 'forceUpdateGX')
                         ]),
                         disableConcurrentBuilds(),
                         buildDiscarder(logRotator(numToKeepStr: '10'))
@@ -16,10 +17,33 @@ pipeline {
                 }
             }
         }
-        stage('Print') {
+        stage('Configure GeneXus Installation') {
+            steps {
+                echo "INFO ForceUpdateGX::${params.forceUpdateGX}"
+                jobHandleGeneXusInstallation params.forceUpdateGX
+            }
+        }
+        /*
+        stage('Checkout/Update KnowledgeBase') {
             steps {
                 jobHandleGeneXusInstallation "Calling handle gx instalaltion"
             }
         }
+        stage('Process Reorganization') {
+            steps {
+                jobHandleGeneXusInstallation "Calling handle gx instalaltion"
+            }
+        }
+        stage('Build KnowledgeBase') {
+            steps {
+                jobHandleGeneXusInstallation "Calling handle gx instalaltion"
+            }
+        }
+        stage('Execute Unit Tests') {
+            steps {
+                jobHandleGeneXusInstallation "Calling handle gx instalaltion"
+            }
+        }
+        */
     }
 }
