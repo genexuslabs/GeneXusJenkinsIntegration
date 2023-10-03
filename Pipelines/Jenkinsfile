@@ -16,12 +16,10 @@ pipeline {
                 }
             }
         }
-        /*
         stage('Print') {
             steps {
                 jobHandleGeneXusInstallation "Calling handle gx instalaltion"
             }
         }
-        */
     }
 }
