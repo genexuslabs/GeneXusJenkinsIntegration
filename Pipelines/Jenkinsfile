@@ -20,7 +20,11 @@ pipeline {
         stage('Configure GeneXus Installation') {
             steps {
                 echo "INFO ForceUpdateGX::${params.forceUpdateGX}"
-                jobHandleGeneXusInstallation params.forceUpdateGX
+                String gitUrl = 'https://github.com/genexuslabs/KBBuilder-GeneXusServer.git'
+                String gitBranch = 'main'
+                String gitCredentialsId = 'genexuslabs_github'
+                String propertiesFilePath = 'gxserveroperatorsaas-app/build.properties'
+                jobHandleGeneXusInstallation gitUrl gitBranch gitCredentialsId propertiesFilePath params.forceUpdateGX
             }
         }
         /*
