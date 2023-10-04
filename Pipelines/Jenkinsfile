@@ -10,6 +10,8 @@ pipeline {
         String gitCredentialsId = 'genexuslabs_github' 
         String propertiesFilePath = 'gxserveroperatorsaas-app/build.properties'
         String machineFilePath = 'gxserveroperatorsaas-app/buildernode.properties'
+        def projectProps
+        def machineProps
     }
     stages {
         stage('Setup parameters') {
@@ -26,8 +28,6 @@ pipeline {
                 }
             }
         }
-        def projectProps
-        def machineProps
         stage('Read Project Properties') {
             steps {
                 script { 
