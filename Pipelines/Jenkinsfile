@@ -1,4 +1,4 @@
-library identifier: 'gx-library'
+@Library('gx-library')
 
 import com.genexus.FileHelper
 
