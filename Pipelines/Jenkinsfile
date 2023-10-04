@@ -19,16 +19,15 @@ pipeline {
         }
         stage('Configure GeneXus Installation') {
             steps {
-                echo "INFO ForceUpdateGX::${params.forceUpdateGX}"
                 jobHandleGeneXusInstallation params.forceUpdateGX
             }
         }
-        /*
         stage('Checkout/Update KnowledgeBase') {
             steps {
-                jobHandleGeneXusInstallation "Calling handle gx instalaltion"
+                jobUpdateKnowledgeBase
             }
         }
+        /*
         stage('Process Reorganization') {
             steps {
                 jobHandleGeneXusInstallation "Calling handle gx instalaltion"
