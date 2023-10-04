@@ -26,7 +26,9 @@ pipeline {
                 }
             }
         }
-        stage('Read proJect properties') {
+        def projectProps
+        def machineProps
+        stage('Read Project Properties') {
             steps {
                 script { 
                     git url: gitUrl, 
@@ -34,43 +36,68 @@ pipeline {
                         credentialsId: gitCredentialsId, 
                         changelog: false, 
                         poll: false
+
                     fileHelper = new FileHelper()
-
-                    buildProperties = readProperties file: propertiesFilePath;
-                    machineProperties = readProperties file: machineFilePath;
-
-                    String msbuildExePath  = fileHelper.joinPath(machineProperties.msbuildInstallationPath, "msbuild.exe")
+                    projectProps = readProperties file: propertiesFilePath;
+                    machineProps = readProperties file: machineFilePath;
+                    String msbuildExePath  = fileHelper.joinPath(machineProps.msbuildInstallationPath, "msbuild.exe")
+                    projectProps.msbuildExePath = msbuildExePath
                     echo "INFO MSBuild:: ${msbuildExePath}"
                     String localGXPath = fileHelper.getAbsolutePathFromWS('\\..\\genexus')
                     echo "INFO GeneXus Installation:: ${localGXPath}"
+                    projectProps.localGXPath = localGXPath
                     String localAndroidSDKPath = false
-                    if(buildProperties.genexusNeedAndroidSDK) {
+                    if(projectProps.genexusNeedAndroidSDK) {
                         localAndroidSDKPath = fileHelper.getAbsolutePathFromWS('\\..\\AndroidSDK')
+                        echo "INFO AndroidSDK:: ${localAndroidSDKPath}"
+                        projectProps.localAndroidSDKPath = localAndroidSDKPath
                     }
-                    String localKBPath = fileHelper.getAbsolutePathFromWS('\\..\\kb\\' + buildProperties.gxserverKB)
+                    String localKBPath = fileHelper.getAbsolutePathFromWS('\\..\\kb\\' + projectProps.gxserverKB)
+                    echo "INFO KnowledgeBase:: ${localKBPath}"
+                    projectProps.localKBPath = localKBPath
                 }
             }
         }
-        /*
         stage('Configure GeneXus Installation') {
             steps {
-                jobHandleGeneXusInstallation params.forceUpdateGX
+                installGeneXusUsingURI projectProps machineProps params.forceUpdateGX
             }
         }
         stage('Checkout/Update KnowledgeBase') {
             steps {
-                jobUpdateKnowledgeBase params.forceUpdateGX
+                gxserver changelog: true, poll: true,
+                    gxCustomPath: "${localGXPath}",
+                    msbuildCustomPath: "${machineProps.msbuildInstallationPath}",
+                    serverURL: buildProperties.gxserverURL,
+                    credentialsId: buildProperties.gxserverCredentials,
+                    kbName: buildProperties.gxserverKB,
+                    kbVersion: buildProperties.gxserverVersion,
+                    kbDbServerInstance: "${machineProps.kbDbServerInstance}",
+                    localKbPath: "${localKBPath}",
+                    localKbVersion: buildProperties.gxserverKB
             }
+        }
+         stage("Read Environment Properties") {
+             /*
+            environmentDefinition = file.readYamlFile(environmentFile.path)
+            String propsFile = genexusTarget.getKBEnvironmentProperties(msbuildExePath, customMSBuildScript, localGXPath, localKBPath, environmentDefinition.name)
+            commiteableEnvironmentProp = file.readJsonFile(propsFile)
+            */
+            projectProps.envTargetPath = localKBPath
+            projectProps.envData = localKBPath
+
+            projectProps.targetPath = "NETSQLServer002"
+            projectProps.dataSource = "SQL Server"
+            projectProps.generator = ".NET"
         }
         stage('Process Reorganization') {
             steps {
-                    /*
-                    configurar data store de storage
-                    check pending reorg
-                    impactar reorganizacion
-                    exportar reorganizacion
-                    
-                jobProcessReorganization params.forceUpdateGX
+                configDefaultDataStore projectProps
+                /*
+                Boolean pendingReorg = checkPendingReorg 
+                reorganizeDatabase
+                exportReorganization
+                */
             }
         }
         /*
