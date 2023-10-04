@@ -28,7 +28,7 @@ pipeline {
                 }
             }
         }
-        stege('Read proJect properties') {
+        stage('Read proJect properties') {
             steps {
                 script { 
                     echo "algo"
