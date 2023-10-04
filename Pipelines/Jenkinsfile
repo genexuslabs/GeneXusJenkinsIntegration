@@ -27,12 +27,12 @@ pipeline {
                 jobUpdateKnowledgeBase params.forceUpdateGX
             }
         }
-        /*
         stage('Process Reorganization') {
             steps {
-                jobHandleGeneXusInstallation "Calling handle gx instalaltion"
+                jobProcessReorganization params.forceUpdateGX
             }
         }
+        /*
         stage('Build KnowledgeBase') {
             steps {
                 jobHandleGeneXusInstallation "Calling handle gx instalaltion"
