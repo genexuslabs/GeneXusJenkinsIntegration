@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Checkout/Update KnowledgeBase') {
             steps {
-                jobUpdateKnowledgeBase
+                jobUpdateKnowledgeBase params.forceUpdateGX
             }
         }
         /*
