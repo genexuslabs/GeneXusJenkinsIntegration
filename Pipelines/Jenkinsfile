@@ -88,7 +88,7 @@ pipeline {
         */
         stage('Process Reorganization') {
             steps {
-                configDefaultDataStore "${projectProps}"
+                configDefaultDataStore "${env.projectProps}"
                 /*
                 Boolean pendingReorg = checkPendingReorg 
                 reorganizeDatabase
