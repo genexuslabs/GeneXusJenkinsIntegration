@@ -35,7 +35,6 @@ pipeline {
                         changelog: false, 
                         poll: false
                     fileHelper = new FileHelper()
-                    agentLabels = fileHelper.checkForJobLabels(agentLabels)
 
                     buildProperties = readProperties file: propertiesFilePath;
                     machineProperties = readProperties file: machineFilePath;
