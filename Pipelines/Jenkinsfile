@@ -79,19 +79,13 @@ pipeline {
                     localKbVersion: buildProperties.gxserverKB
             }
         }
+        /*
          stage("Read Environment Properties") {
-             /*
             environmentDefinition = file.readYamlFile(environmentFile.path)
             String propsFile = genexusTarget.getKBEnvironmentProperties(msbuildExePath, customMSBuildScript, localGXPath, localKBPath, environmentDefinition.name)
             commiteableEnvironmentProp = file.readJsonFile(propsFile)
-            */
-            projectProps.envTargetPath = localKBPath
-            projectProps.envData = localKBPath
-
-            projectProps.targetPath = "NETSQLServer002"
-            projectProps.dataSource = "SQL Server"
-            projectProps.generator = ".NET"
         }
+        */
         stage('Process Reorganization') {
             steps {
                 configDefaultDataStore "${projectProps}"
