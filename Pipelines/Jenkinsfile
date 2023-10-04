@@ -29,7 +29,11 @@ pipeline {
             }
         }
         stege('Read proJect properties') {
-            echo "algo"
+            steps {
+                script { 
+                    echo "algo"
+                }
+            }
             /*
             git url: gitUrl, 
                 branch: gitBranch, 
