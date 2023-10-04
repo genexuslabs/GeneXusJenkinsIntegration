@@ -58,11 +58,13 @@ pipeline {
                 }
             }
         }
+        /*
         stage('Configure GeneXus Installation') {
             steps {
                 installGeneXusUsingURI "${projectProps}" "${machineProps}" "${params.forceUpdateGX}"
             }
         }
+        */
         stage('Checkout/Update KnowledgeBase') {
             steps {
                 gxserver changelog: true, poll: true,
