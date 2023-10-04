@@ -4,6 +4,7 @@ import com.genexus.FileHelper
 
 pipeline {
     agent { node { label 'kbbuilder-node-6' } }
+    /*
     environment {
         String gitUrl = 'https://github.com/genexuslabs/KBBuilder-GeneXusServer.git'
         String gitBranch = 'production' 
@@ -11,6 +12,7 @@ pipeline {
         String propertiesFilePath = 'gxserveroperatorsaas-app/build.properties'
         String machineFilePath = 'gxserveroperatorsaas-app/buildernode.properties'
     }
+    */
     stages {
         stage('Setup parameters') {
             steps {
@@ -27,12 +29,14 @@ pipeline {
             }
         }
         stege('Read proJect properties') {
+            echo "algo"
+            /*
             git url: gitUrl, 
                 branch: gitBranch, 
                 credentialsId: gitCredentialsId, 
                 changelog: false, 
                 poll: false
-            
+            /*
             fileHelper = new FileHelper()
             agentLabels = fileHelper.checkForJobLabels(agentLabels)
 
@@ -48,6 +52,7 @@ pipeline {
                 localAndroidSDKPath = getAbsolutePathFromWS('\\..\\AndroidSDK')
             }
             String localKBPath = getAbsolutePathFromWS('\\..\\kb\\' + buildProperties.gxserverKB)
+            */
         }
         /*
         stage('Configure GeneXus Installation') {
