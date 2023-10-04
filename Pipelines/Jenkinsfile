@@ -60,7 +60,7 @@ pipeline {
         }
         stage('Configure GeneXus Installation') {
             steps {
-                installGeneXusUsingURI projectProps machineProps params.forceUpdateGX
+                installGeneXusUsingURI "${projectProps}" "${machineProps}" "${params.forceUpdateGX}"
             }
         }
         stage('Checkout/Update KnowledgeBase') {
@@ -92,7 +92,7 @@ pipeline {
         }
         stage('Process Reorganization') {
             steps {
-                configDefaultDataStore projectProps
+                configDefaultDataStore "${projectProps}"
                 /*
                 Boolean pendingReorg = checkPendingReorg 
                 reorganizeDatabase
