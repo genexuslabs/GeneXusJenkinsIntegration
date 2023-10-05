@@ -4,7 +4,7 @@ def projectDefinition = [:]
 pipeline {
     agent { node { label 'kbbuilder-node-6' } }
     environment {
-        Boolean forceUpdateGX = false
+        //Boolean forceUpdateGX = false
         String gitUrl = 'https://github.com/genexuslabs/KBBuilder-GeneXusServer.git'
         String gitBranch = 'production' 
         String gitCredentialsId = 'genexuslabs_github' 
@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     projectDefinition = readPipelineProperties(gitUrl: env.gitUrl, gitBranch: env.gitBranch, gitCredentialsId: env.gitCredentialsId, propertiesFilePath: env.propertiesFilePath, machineFilePath: env.machineFilePath)
-                    projectDefinition.forceUpdateGX = env.forceUpdateGX
+                    projectDefinition.forceUpdateGX = false
                 }
             }
         }
