@@ -22,12 +22,16 @@ pipeline {
         }
         stage('Configure GeneXus Installation') {
             steps {
-                installGeneXusUsingURI(projectDefinition)
+                script {
+                    installGeneXusUsingURI(projectDefinition)
+                }
             }
         }
          stage("Read Environment Properties") {
             steps {
-                projectDefinition = readCommiteableProperties(projectDefinition)
+                script {
+                    projectDefinition = readCommiteableProperties(projectDefinition)
+                }
             }
         }
         /*
