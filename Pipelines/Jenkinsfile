@@ -34,16 +34,19 @@ pipeline {
                 }
             }
         }
-        /*
         stage('Process Reorganization') {
             steps {
-                configDefaultDataStore(projectDefinition)
-                /*
-                Boolean pendingReorg = checkPendingReorg 
-                reorganizeDatabase
-                exportReorganization
+                script {
+                    configureDataStore(projectDefinition, 'Default')
+                    /*
+                    Boolean pendingReorg = checkPendingReorg 
+                    reorganizeDatabase
+                    exportReorganization
+                    */
+                }
             }
         }
+        /*
         stage('Build KnowledgeBase') {
             steps {
                 jobHandleGeneXusInstallation "Calling handle gx instalaltion"
