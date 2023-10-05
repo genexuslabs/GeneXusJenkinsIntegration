@@ -40,8 +40,9 @@ pipeline {
             steps {
                 script {
                     configureDataStore(projectDefinition, 'Default')
+                    Boolean pendingReorg = checkPendingReorg(projectDefinition)
+                    echo " READ pendingReorg::::${pendingReorg}"
                     /*
-                    Boolean pendingReorg = checkPendingReorg 
                     reorganizeDatabase
                     exportReorganization
                     */
