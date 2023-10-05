@@ -1,82 +1,28 @@
-@Library('gx-library')
+@Library('gx-library@jalbarellos') _
 
-import com.genexus.FileHelper
-
+def projectDefinition = [:]
 pipeline {
     agent { node { label 'kbbuilder-node-6' } }
     environment {
+        Boolean forceUpdateGX = false
         String gitUrl = 'https://github.com/genexuslabs/KBBuilder-GeneXusServer.git'
         String gitBranch = 'production' 
         String gitCredentialsId = 'genexuslabs_github' 
         String propertiesFilePath = 'gxserveroperatorsaas-app/build.properties'
         String machineFilePath = 'gxserveroperatorsaas-app/buildernode.properties'
-        def projectProps
-        def machineProps
     }
     stages {
-        stage('Setup parameters') {
-            steps {
-                script { 
-                    properties([
-                        parameters([
-                            booleanParam(defaultValue: false, description: 'Force rebuild', name: 'forceRebuild'),
-                            booleanParam(defaultValue: false, description: 'Force update GeneXus Installation', name: 'forceUpdateGX')
-                        ]),
-                        disableConcurrentBuilds(),
-                        buildDiscarder(logRotator(numToKeepStr: '10'))
-                    ])
-                }
-            }
-        }
         stage('Read Project Properties') {
             steps {
-                script { 
-                    git url: gitUrl, 
-                        branch: gitBranch, 
-                        credentialsId: gitCredentialsId, 
-                        changelog: false, 
-                        poll: false
-
-                    fileHelper = new FileHelper()
-                    projectProps = readProperties file: propertiesFilePath;
-                    machineProps = readProperties file: machineFilePath;
-                    String msbuildExePath  = fileHelper.joinPath(machineProps.msbuildInstallationPath, "msbuild.exe")
-                    projectProps.msbuildExePath = msbuildExePath
-                    echo "INFO MSBuild:: ${msbuildExePath}"
-                    String localGXPath = fileHelper.getAbsolutePathFromWS('\\..\\genexus')
-                    echo "INFO GeneXus Installation:: ${localGXPath}"
-                    projectProps.localGXPath = localGXPath
-                    String localAndroidSDKPath = false
-                    if(projectProps.genexusNeedAndroidSDK) {
-                        localAndroidSDKPath = fileHelper.getAbsolutePathFromWS('\\..\\AndroidSDK')
-                        echo "INFO AndroidSDK:: ${localAndroidSDKPath}"
-                        projectProps.localAndroidSDKPath = localAndroidSDKPath
-                    }
-                    String localKBPath = fileHelper.getAbsolutePathFromWS('\\..\\kb\\' + projectProps.gxserverKB)
-                    echo "INFO KnowledgeBase:: ${localKBPath}"
-                    projectProps.localKBPath = localKBPath
+                script {
+                    projectDefinition = readPipelineProperties(gitUrl: env.gitUrl, gitBranch: env.gitBranch, gitCredentialsId: env.gitCredentialsId, propertiesFilePath: env.propertiesFilePath, machineFilePath: env.machineFilePath)
+                    projectDefinition.forceUpdateGX = env.forceUpdateGX
                 }
             }
         }
-        /*
         stage('Configure GeneXus Installation') {
             steps {
-                installGeneXusUsingURI "${projectProps}" "${machineProps}" "${params.forceUpdateGX}"
-            }
-        }
-        */
-        stage('Checkout/Update KnowledgeBase') {
-            steps {
-                gxserver changelog: true, poll: true,
-                    gxCustomPath: "${localGXPath}",
-                    msbuildCustomPath: "${machineProps.msbuildInstallationPath}",
-                    serverURL: buildProperties.gxserverURL,
-                    credentialsId: buildProperties.gxserverCredentials,
-                    kbName: buildProperties.gxserverKB,
-                    kbVersion: buildProperties.gxserverVersion,
-                    kbDbServerInstance: "${machineProps.kbDbServerInstance}",
-                    localKbPath: "${localKBPath}",
-                    localKbVersion: buildProperties.gxserverKB
+                installGeneXusUsingURI(projectDefinition)
             }
         }
         /*
@@ -85,7 +31,6 @@ pipeline {
             String propsFile = genexusTarget.getKBEnvironmentProperties(msbuildExePath, customMSBuildScript, localGXPath, localKBPath, environmentDefinition.name)
             commiteableEnvironmentProp = file.readJsonFile(propsFile)
         }
-        */
         stage('Process Reorganization') {
             steps {
                 configDefaultDataStore env.projectProps
@@ -93,7 +38,6 @@ pipeline {
                 Boolean pendingReorg = checkPendingReorg 
                 reorganizeDatabase
                 exportReorganization
-                */
             }
         }
         /*
