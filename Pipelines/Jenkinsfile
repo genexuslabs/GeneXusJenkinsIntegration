@@ -26,7 +26,9 @@ pipeline {
             }
         }
          stage("Read Environment Properties") {
-            projectDefinition = readCommiteableProperties(projectDefinition)
+            steps {
+                projectDefinition = readCommiteableProperties(projectDefinition)
+            }
         }
         /*
         stage('Process Reorganization') {
