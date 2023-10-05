@@ -5,6 +5,7 @@ pipeline {
     agent { node { label 'kbbuilder-node-6' } }
     environment {
         Boolean forceUpdateGX = false
+        Boolean forceRebuild = false
         String gitUrl = 'https://github.com/genexuslabs/KBBuilder-GeneXusServer.git'
         String gitBranch = 'production' 
         String gitCredentialsId = 'genexuslabs_github' 
@@ -48,12 +49,21 @@ pipeline {
                 }
             }
         }
-        /*
-        stage('Build KnowledgeBase') {
+        stage('Configure GAM Datastore') {
             steps {
-                jobHandleGeneXusInstallation "Calling handle gx instalaltion"
+                script {
+                    configureDataStore(projectDefinition, 'GAM')
+                }
             }
         }
+        stage('Build KnowledgeBase') {
+            steps {
+                script {
+                    buildKnowledgeBase(projectDefinition, forceRebuild)
+                }
+            }
+        }
+        /*
         stage('Execute Unit Tests') {
             steps {
                 jobHandleGeneXusInstallation "Calling handle gx instalaltion"
