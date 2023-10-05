@@ -25,22 +25,19 @@ pipeline {
                 installGeneXusUsingURI(projectDefinition)
             }
         }
-        /*
          stage("Read Environment Properties") {
-            environmentDefinition = file.readYamlFile(environmentFile.path)
-            String propsFile = genexusTarget.getKBEnvironmentProperties(msbuildExePath, customMSBuildScript, localGXPath, localKBPath, environmentDefinition.name)
-            commiteableEnvironmentProp = file.readJsonFile(propsFile)
+            projectDefinition = readCommiteableProperties(projectDefinition)
         }
+        /*
         stage('Process Reorganization') {
             steps {
-                configDefaultDataStore env.projectProps
+                configDefaultDataStore(projectDefinition)
                 /*
                 Boolean pendingReorg = checkPendingReorg 
                 reorganizeDatabase
                 exportReorganization
             }
         }
-        /*
         stage('Build KnowledgeBase') {
             steps {
                 jobHandleGeneXusInstallation "Calling handle gx instalaltion"
