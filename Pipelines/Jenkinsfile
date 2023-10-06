@@ -21,6 +21,7 @@ pipeline {
                 }
             }
         }
+        /*
         stage('Configure GeneXus Installation') {
             steps {
                 script {
@@ -28,7 +29,8 @@ pipeline {
                 }
             }
         }
-         stage("Read Environment Properties") {
+        */
+        stage("Read Environment Properties") {
             steps {
                 script {
                     projectDefinition = readCommiteableProperties(projectDefinition)
