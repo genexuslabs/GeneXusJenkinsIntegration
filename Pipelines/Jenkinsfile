@@ -9,8 +9,8 @@ pipeline {
         String gitUrl = 'https://github.com/genexuslabs/KBBuilder-GeneXusServer.git'
         String gitBranch = 'production' 
         String gitCredentialsId = 'genexuslabs_github' 
-        String propertiesFilePath = 'gxserveroperatorsaas-app/build.properties'
-        String machineFilePath = 'gxserveroperatorsaas-app/buildernode.properties'
+        String propertiesFilePath = 'genexuskbbuildermanager-app/build.properties'
+        String machineFilePath = 'genexuskbbuildermanager-app/buildernode.properties'
     }
     stages {
         stage('Read Project Properties') {
