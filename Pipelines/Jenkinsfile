@@ -57,9 +57,11 @@ pipeline {
                     configureDataStore(projectDefinition, 'Default')
                     Boolean pendingReorg = checkPendingReorg(projectDefinition)
                     echo " READ pendingReorg::::${pendingReorg}"
-                    reorganizeDatabase(projectDefinition)
-                    String reorgExportPath = "${projectDefinition.localKBPath}\\${projectDefinition.targetPath}\\Deploy\\AppliedReorganizations\\${env.BUILD_NUMBER}_Reorganization"
-                    exportReorganization(projectDefinition, reorgExportPath)
+                    if(pendingReorg) {
+                        reorganizeDatabase(projectDefinition)
+                        String reorgExportPath = "${projectDefinition.localKBPath}\\${projectDefinition.targetPath}\\Deploy\\AppliedReorganizations\\${env.BUILD_NUMBER}_Reorganization"
+                        exportReorganization(projectDefinition, reorgExportPath)
+                    }
                 }
             }
         }
