@@ -21,7 +21,6 @@ pipeline {
                 }
             }
         }
-        /*
         stage('Configure GeneXus Installation') {
             steps {
                 script {
@@ -29,7 +28,6 @@ pipeline {
                 }
             }
         }
-        */
         stage("Checkout/Update Knowledge Base") {
             steps {
                 script {
