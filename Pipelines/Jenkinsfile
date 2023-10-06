@@ -75,7 +75,8 @@ pipeline {
         stage('Build KnowledgeBase') {
             steps {
                 script {
-                    buildKnowledgeBase(projectDefinition, forceRebuild)
+                    projectDefinition.forceRebuild = env.forceRebuild
+                    buildKnowledgeBase(projectDefinition)
                 }
             }
         }
