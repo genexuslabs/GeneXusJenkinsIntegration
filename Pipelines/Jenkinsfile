@@ -30,6 +30,22 @@ pipeline {
             }
         }
         */
+        stage("Checkout/Update Knowledge Base") {
+            steps {
+                script {
+                    gxserver changelog: true, poll: true,
+                        gxCustomPath: "${projectDefinition.localGXPath}",
+                        msbuildCustomPath: "${projectDefinition.msbuildInstallationPath}",
+                        serverURL: projectDefinition.gxserverURL,
+                        credentialsId: projectDefinition.gxserverCredentials,
+                        kbName: projectDefinition.gxserverKB,
+                        kbVersion: projectDefinition.gxserverVersion,
+                        kbDbServerInstance: "${projectDefinition.kbDbServerInstance}",
+                        localKbPath: "${projectDefinition.localKBPath}",
+                        localKbVersion: projectDefinition.gxserverKB
+                }
+            }
+        }
         stage("Read Environment Properties") {
             steps {
                 script {
