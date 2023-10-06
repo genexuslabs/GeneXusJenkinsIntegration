@@ -1,4 +1,4 @@
-@Library('gx-library@jalbarellos') _
+@Library('gx-library@trunk') _
 
 def projectDefinition = [:]
 pipeline {
