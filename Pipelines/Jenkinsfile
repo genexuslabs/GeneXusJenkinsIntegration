@@ -4,8 +4,6 @@ def projectDefinition = [:]
 pipeline {
     agent { node { label 'kbbuilder-node-6' } }
     environment {
-        Boolean forceUpdateGX = false
-        Boolean forceRebuild = false
         String gitUrl = 'https://github.com/genexuslabs/KBBuilder-GeneXusServer.git'
         String gitBranch = 'production' 
         String gitCredentialsId = 'genexuslabs_github' 
@@ -13,11 +11,25 @@ pipeline {
         String machineFilePath = 'genexuskbbuildermanager-app/buildernode.properties'
     }
     stages {
+        stage('Set pipeline preferences') {
+            properties([
+                parameters([
+                    booleanParam(defaultValue: false, description: 'Force rebuild', name: 'forceRebuild'),
+                    booleanParam(defaultValue: false, description: 'Force update GeneXus Installation', name: 'forceUpdateGX')
+                ]),
+                // Discard old builds (10)
+                buildDiscarder(logRotator(numToKeepStr: '10')),
+                // Do not allow concurrent builds
+                disableConcurrentBuilds() //,
+                // Config Poll SCM
+                //pipelineTriggers([pollSCM('H/5 * * * *')])
+            ])
+        }
         stage('Read Project Properties') {
             steps {
                 script {
                     projectDefinition = readPipelineProperties(gitUrl: env.gitUrl, gitBranch: env.gitBranch, gitCredentialsId: env.gitCredentialsId, propertiesFilePath: env.propertiesFilePath, machineFilePath: env.machineFilePath)
-                    projectDefinition.forceUpdateGX = env.forceUpdateGX
+                    projectDefinition.forceUpdateGX = params.forceUpdateGX
                 }
             }
         }
@@ -75,17 +87,10 @@ pipeline {
         stage('Build KnowledgeBase') {
             steps {
                 script {
-                    projectDefinition.forceRebuild = env.forceRebuild
+                    projectDefinition.forceRebuild = params.forceRebuild
                     buildKnowledgeBase(projectDefinition)
                 }
             }
         }
-        /*
-        stage('Execute Unit Tests') {
-            steps {
-                jobHandleGeneXusInstallation "Calling handle gx instalaltion"
-            }
-        }
-        */
     }
 }
