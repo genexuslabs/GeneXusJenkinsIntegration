@@ -80,5 +80,12 @@ pipeline {
                 }
             }
         }
+        stage('Execute Unit Tests') {
+            steps {
+                script {
+                    runUnitTestSuite(projectDefinition)
+                }
+            }
+        }
     }
 }
