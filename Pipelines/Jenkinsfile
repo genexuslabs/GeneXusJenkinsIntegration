@@ -12,18 +12,20 @@ pipeline {
     }
     stages {
         stage('Set pipeline preferences') {
-            properties([
-                parameters([
-                    booleanParam(defaultValue: false, description: 'Force rebuild', name: 'forceRebuild'),
-                    booleanParam(defaultValue: false, description: 'Force update GeneXus Installation', name: 'forceUpdateGX')
-                ]),
-                // Discard old builds (10)
-                buildDiscarder(logRotator(numToKeepStr: '10')),
-                // Do not allow concurrent builds
-                disableConcurrentBuilds() //,
-                // Config Poll SCM
-                //pipelineTriggers([pollSCM('H/5 * * * *')])
-            ])
+            steps {
+                properties([
+                    parameters([
+                        booleanParam(defaultValue: false, description: 'Force rebuild', name: 'forceRebuild'),
+                        booleanParam(defaultValue: false, description: 'Force update GeneXus Installation', name: 'forceUpdateGX')
+                    ]),
+                    // Discard old builds (10)
+                    buildDiscarder(logRotator(numToKeepStr: '10')),
+                    // Do not allow concurrent builds
+                    disableConcurrentBuilds() //,
+                    // Config Poll SCM
+                    //pipelineTriggers([pollSCM('H/5 * * * *')])
+                ])
+            }
         }
         stage('Read Project Properties') {
             steps {
