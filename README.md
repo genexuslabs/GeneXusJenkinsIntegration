@@ -7,5 +7,8 @@ Follow [these instructions](./GXServer-JenkinsSetup/) if you are interested in i
 ## Want to integrate an existent Jenkins with GeneXus Server or GeneXus?
 See [these instructions](./CIscripts/) if you want to create and monitor pipelines from GeneXus Server and GeneXus Windows client.
 
+## Want to create a Jenkinsfile using GeneXus Shared Libraries?
+See [these instructions](./Pipelines/) if you want to create a pipelines from a template.
+
 ## Want to known more about CI with GeneXus Server and GeneXus?
 Just look at our document [CI integrated to GeneXus and GXserver](https://wiki.genexus.com/commwiki/servlet/wiki?46966)

@@ -1,0 +1,90 @@
+@Library('gx-library@main') _
+
+import com.genexus.PropertiesHelper
+
+def projectDefinition = [:]
+def environmentDefinition = [:]
+def duDefinition = [:]
+
+def help = new PropertiesHelper()
+
+pipeline {
+    agent { node { label '<buidler-node-in-jenkins>' } }
+    parameters {
+        booleanParam(defaultValue: false, description: 'Force rebuild', name: 'forceRebuild')
+    }
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+    stages {
+        stage('Read Project Properties') {
+            steps {
+                script {
+                    projectDefinition = readProperties file: 'buildernode.properties';
+                    projectDefinition = readProperties defaults: projectDefinition, file: 'knowledgebase.properties';
+                    projectDefinition.forceRebuild = params.forceRebuild
+                    
+                    echo "INFO MSBuild:: ${projectDefinition.msbuildExePath}"
+                    echo "INFO GeneXus Installation:: ${projectDefinition.gxBasePath}"
+                    echo "INFO KnowledgeBase:: ${projectDefinition.localKBPath}"
+                    echo "INFO Android SDK Installation:: ${projectDefinition.localAndroidSDKPath}"
+                }
+            }
+        }
+        stage("Checkout/Update Knowledge Base") {
+            steps {
+                script {
+                    gxserver changelog: true, poll: true,
+                        gxCustomPath: "${projectDefinition.gxBasePath}",
+                        msbuildCustomPath: "${projectDefinition.msbuildExePath}",
+                        serverURL: projectDefinition.gxserverURL,
+                        credentialsId: projectDefinition.gxserverCredentials,
+                        kbName: projectDefinition.gxserverKB,
+                        kbVersion: projectDefinition.gxserverVersion,
+                        kbDbServerInstance: "${projectDefinition.kbDbServerInstance}",
+                        localKbPath: "${projectDefinition.localKBPath}",
+                        localKbVersion: projectDefinition.gxserverKB
+                }
+            }
+        }
+        stage('Update Modules') {
+            steps {
+                script {
+                    projectDefinition.moduleName = "GeneXusReporting"
+                    updateInstalledModule(projectDefinition)
+                }
+            }
+        }
+        stage('Build NetSQLServer Environment') {
+            steps {
+                script {
+                    environmentDefinition = readProperties defaults: projectDefinition, file: 'env_netsqlserver.properties';
+                    environmentDefinition.targetPath = help.getEnvironmentProperty(environmentDefinition, "TargetPath")
+                    echo "[INFO] ReadTargetPath = ${environmentDefinition.targetPath}"
+                    configureDataStore(environmentDefinition)
+                    buildInstallationEnvironment(environmentDefinition)
+                }
+            }
+        }
+        stage('Package GXflowDemo DU') {
+            steps {
+                script {
+                    duDefinition = readProperties defaults: environmentDefinition, file: 'du_app.properties';
+                    packageLocalDU(duDefinition)
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                sendNotifications(projectDefinition)
+                closeKnowledgeBase(projectDefinition)
+            }
+        }
+    }
+}
