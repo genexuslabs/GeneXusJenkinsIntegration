@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<hhudson plugin="genexus@1.9-beta-6">
-  <installations class="org.jenkinsci.plugins.genexus.GeneXusInstallation-array">
-  </installations>
-</hhudson>

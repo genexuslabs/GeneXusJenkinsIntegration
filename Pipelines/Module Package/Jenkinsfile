@@ -1,0 +1,129 @@
+@Library('gx-library@main') _
+
+import com.genexus.FileHelper
+import com.genexus.PropertiesHelper
+
+def projectDefinition = [:]
+def environmentDefinition = [:]
+def file = new FileHelper()
+def help = new PropertiesHelper()
+
+pipeline {
+    agent { node { label 'gxbuilder-local' } }
+    parameters {
+        booleanParam(defaultValue: false, description: 'Force rebuild', name: 'forceRebuild')
+    }
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+    stages {
+        stage('Read Project Properties') {
+            steps {
+                script {
+                    projectDefinition = readProperties file: 'buildernode.properties';
+                    projectDefinition = readProperties defaults: projectDefinition, file: 'knowledgebase.properties';
+                    projectDefinition.forceRebuild = params.forceRebuild
+                    
+                    echo "INFO MSBuild:: ${projectDefinition.msbuildExePath}"
+                    echo "INFO GeneXus Installation:: ${projectDefinition.gxBasePath}"
+                    echo "INFO KnowledgeBase:: ${projectDefinition.localKBPath}"
+                    echo "INFO Android SDK Installation:: ${projectDefinition.localAndroidSDKPath}"
+                }
+            }
+        }
+        stage("Checkout/Update Knowledge Base") {
+            steps {
+                script {
+                    gxserver changelog: true, poll: true,
+                        gxCustomPath: "${projectDefinition.gxBasePath}",
+                        msbuildCustomPath: "${projectDefinition.msbuildExePath}",
+                        serverURL: projectDefinition.gxserverURL,
+                        credentialsId: projectDefinition.gxserverCredentials,
+                        kbName: projectDefinition.gxserverKB,
+                        kbVersion: projectDefinition.gxserverVersion,
+                        kbDbServerInstance: "${projectDefinition.kbDbServerInstance}",
+                        localKbPath: "${projectDefinition.localKBPath}",
+                        localKbVersion: projectDefinition.gxserverKB
+                }
+            }
+        }
+        stage('Build CSharp Environment') {
+            steps {
+                script {
+                    environmentDefinition = readProperties defaults: projectDefinition, file: 'env_csharp.properties';
+                    // help.setGeneratorProperty(environmentDefinition, "SmartDevices", "Generate Android", environmentDefinition.generateAndroid)
+                    // echo "[INFO] Set Generate Android = ${environmentDefinition.generateAndroid}"
+                    // help.setGeneratorProperty(environmentDefinition, "SmartDevices", "Generate Apple", environmentDefinition.generateApple)
+                    // echo "[INFO] Set Generate Apple = ${environmentDefinition.generateApple}"
+                    buildConfigurationEnvironment(environmentDefinition)
+                    
+                }
+            }
+        }
+        stage('Build Java Environment') {
+            steps {
+                script {
+                    environmentDefinition = readProperties defaults: projectDefinition, file: 'env_java.properties';
+                    // help.setGeneratorProperty(environmentDefinition, "Default", "Java platform support", "Both Platforms")
+                    // echo "[INFO] Java platform support = Both Platforms"
+                    // String jdkToolPath = tool name: environmentDefinition.jdkInstallationId, type: 'jdk'
+                    // help.setGeneratorProperty(environmentDefinition, "SmartDevices", "JDK Directory", jdkToolPath)
+                    // echo "[INFO] Set JDK Directory = ${jdkToolPath}"                    
+                    // help.setGeneratorProperty(environmentDefinition, "SmartDevices", "Generate Android", environmentDefinition.generateAndroid)
+                    // echo "[INFO] Set Generate Android = ${environmentDefinition.generateAndroid}"
+                    // help.setGeneratorProperty(environmentDefinition, "SmartDevices", "Generate Apple", environmentDefinition.generateApple)
+                    // echo "[INFO] Set Generate Apple = ${environmentDefinition.generateApple}"
+                    buildConfigurationEnvironment(environmentDefinition)
+                }
+            }
+        }
+        stage('Build NetCore Environment') {
+            steps {
+                script {
+                    environmentDefinition = readProperties defaults: projectDefinition, file: 'env_netcore.properties';
+                    // help.setEnvironmentProperty(environmentDefinition, "GeneratedLanguage", "NetCore")
+                    // echo "[INFO] Set Generated Language = NetCore"
+                    // help.setGeneratorProperty(environmentDefinition, "SmartDevices", "Generate Android", environmentDefinition.generateAndroid)
+                    // echo "[INFO] Set Generate Android = ${environmentDefinition.generateAndroid}"
+                    // help.setGeneratorProperty(environmentDefinition, "SmartDevices", "Generate Apple", environmentDefinition.generateApple)
+                    // echo "[INFO] Set Generate Apple = ${environmentDefinition.generateApple}"
+                    buildConfigurationEnvironment(environmentDefinition)
+                }
+            }
+        }
+        stage('Package Module') {
+            steps {
+                script {
+                    projectDefinition.packageModuleName = "<module-to-package>"
+                    // Read commited Module version
+                    // def moduleVersion = help.getObjectProperty(projectDefinition, "Module:${projectDefinition.packageModuleName}", "ModuleVersion")
+                    // echo "[INFO] read ${projectDefinition.packageModuleName}::moduleVersion = ${moduleVersion}"
+                    // // Set properties module version
+                    // help.setObjectProperty(projectDefinition, "Module:${projectDefinition.packageModuleName}", "ModuleVersion", projectDefinition.moduleVersion)
+                    // // Re-read Module version
+                    // moduleVersion = help.getObjectProperty(projectDefinition, "Module:${projectDefinition.packageModuleName}", "ModuleVersion")
+                    // echo "[INFO] read ${projectDefinition.packageModuleName}::moduleVersion = ${moduleVersion}"
+                    // Package module
+                    projectDefinition.csharpEnvName = "NetEnvironment"
+                    projectDefinition.javaEnvName = "Java"
+                    projectDefinition.netCoreEnvName = "NetCore"
+                    projectDefinition.localModulePackage = packageModule(projectDefinition)
+                    echo "Module Location Path::${projectDefinition.localModulePackage}"
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                sendNotifications(projectDefinition)
+                closeKnowledgeBase(projectDefinition)
+                //file.removeDirectoryPath(projectDefinition.localKBPath)
+            }
+        }
+    }
+}

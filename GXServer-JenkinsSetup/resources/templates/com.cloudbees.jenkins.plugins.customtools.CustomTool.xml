@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ccloudbees plugin="custom-tools-plugin@0.7">
-  <installations class="com.cloudbees.jenkins.plugins.customtools.CustomTool-array">
-  </installations>
-</ccloudbees>
