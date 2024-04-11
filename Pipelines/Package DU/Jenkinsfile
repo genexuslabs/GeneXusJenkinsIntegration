@@ -1,0 +1,112 @@
+@Library('gx-library@main') _
+
+import com.genexus.FileHelper
+import com.genexus.PropertiesHelper
+import com.genexus.GXDeployEngineHelper
+
+def projectDefinition = [:]
+def environmentDefinition = [:]
+def duDefinition = [:]
+def file = new FileHelper()
+def help = new PropertiesHelper()
+def deployEngine = new GXDeployEngineHelper()
+
+pipeline {
+    agent { node { label '<builder-node-in-jenkins>' } }
+    parameters {
+        booleanParam(defaultValue: false, description: 'Force rebuild', name: 'forceRebuild')
+    }
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+    stages {
+        stage('Read Project Properties') {
+            steps {
+                script {
+                    projectDefinition = readProperties file: 'buildernode.properties';
+                    projectDefinition = readProperties defaults: projectDefinition, file: 'knowledgebase.properties';
+                    projectDefinition.forceRebuild = params.forceRebuild
+                    
+                    echo "INFO MSBuild:: ${projectDefinition.msbuildExePath}"
+                    echo "INFO GeneXus Installation:: ${projectDefinition.gxBasePath}"
+                    echo "INFO KnowledgeBase:: ${projectDefinition.localKBPath}"
+                    echo "INFO Android SDK Installation:: ${projectDefinition.localAndroidSDKPath}"
+                }
+            }
+        }
+        stage("Checkout/Update Knowledge Base") {
+            steps {
+                script {
+                    gxserver changelog: true, poll: true,
+                        gxCustomPath: "${projectDefinition.gxBasePath}",
+                        msbuildCustomPath: "${projectDefinition.msbuildExePath}",
+                        serverURL: projectDefinition.gxserverURL,
+                        credentialsId: projectDefinition.gxserverCredentials,
+                        kbName: projectDefinition.gxserverKB,
+                        kbVersion: projectDefinition.gxserverVersion,
+                        kbDbServerInstance: "${projectDefinition.kbDbServerInstance}",
+                        localKbPath: "${projectDefinition.localKBPath}",
+                        localKbVersion: projectDefinition.gxserverKB
+                }
+            }
+        }
+        stage('Update Modules') {
+            steps {
+                script {
+                    projectDefinition.moduleName = "<genexus-module>"
+                    updateInstalledModule(projectDefinition)
+                }
+            }
+        }
+        stage('Process Reorganization') {
+            steps {
+                script {
+                    duDefinition = readProperties defaults: environmentDefinition, file: 'env_netsqlserver.properties';
+                    configureDataStore(environmentDefinition)
+                    boolean hasPendingReorg = checkPendingReorg(environmentDefinition)
+                    if(hasPendingReorg) {
+                        applyReorganization(environmentDefinition)
+                        exportReorganization(environmentDefinition)
+                    }
+                }
+            }
+        }
+        stage('Build Environment') {
+            steps {
+                script {
+                    environmentDefinition.targetPath = help.getEnvironmentProperty(environmentDefinition, "TargetPath")
+                    echo "[INFO] Read TargetPath = ${environmentDefinition.targetPath}"
+                    environmentDefinition.generator = help.getEnvironmentProperty(environmentDefinition, "GeneratedLanguage")
+                    echo "[INFO] Read Generator = ${environmentDefinition.generator}"
+                    String jdkToolPath = tool name: environmentDefinition.jdkInstallationId, type: 'jdk'
+                    help.setGeneratorProperty(environmentDefinition, "Default", "JDK_DIR_JAVA", "${jdkToolPath}\\..\\")
+                    echo "[INFO] Set JDK Directory = ${jdkToolPath}"
+                    def deployTarget = "${environmentDefinition.localKBPath}\\${environmentDefinition.targetPath}\\web\\Deploy"
+                    help.setGeneratorProperty(environmentDefinition, "Default", "servlet directory", "${deployTarget}\\servlet")
+                    help.setGeneratorProperty(environmentDefinition, "Default", "static content directory seen from client", "${deployTarget}\\static")
+                    buildInstallationEnvironment(environmentDefinition)
+                }
+            }
+        }
+        stage('Package DeploymentUnit') {
+            steps {
+                script {
+                    duDefinition = readProperties defaults: environmentDefinition, file: 'du_app.properties';
+                    duDefinition.packageLocation = packageLocalDU(duDefinition)
+                    echo "duDefinition.packageLocation::${duDefinition.packageLocation}"
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                closeKnowledgeBase(projectDefinition)
+            }
+        }
+    }
+}
